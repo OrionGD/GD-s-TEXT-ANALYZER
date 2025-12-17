@@ -3,7 +3,27 @@
 A lightweight **Python-based Text Analyzer** that cleans text, extracts meaningful words and sentences, performs basic **sentiment analysis**, and identifies **keywords** using simple natural language processing techniques. Designed for learning, experimentation, and small-scale text analysis tasks.
 
 ---
+```mermaid
+graph TD
+    A[User Input Text] --> B[CLI Interface]
+    B --> C[TextAnalyzer Class]
 
+    C --> D[Text Cleaning Module]
+    D --> E[Sentence & Word Extraction]
+    E --> F[Stopword Filtering]
+
+    F --> G[Sentiment Analysis Engine]
+    F --> H[Keyword Identification Module]
+
+    G --> I[Polarity & Subjectivity Scores]
+    H --> J[Top Keywords]
+
+    I --> K[Analysis Result Formatter]
+    J --> K
+
+    K --> L[Console Output]
+```
+---
 ## ✨ Features
 
 * 🧹 **Text Cleaning** – Removes special characters, numbers, and normalizes text
