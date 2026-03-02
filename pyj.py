@@ -2,38 +2,30 @@ import re
 
 class TextAnalyzer:
     def __init__(self):
-        self.stopwords = set([
-            'i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 
-          'you', 'your', 'yours', 'yourself', 'yourselves', 'he', 
-            'him', 'his', 'himself', 'she', 'her', 'hers', 'herself', 
-            'it', 'its', 'itself', 'they', 'them', 'their', 'theirs', 
-            'themselves', 'what', 'which', 'who', 'whom', 'this', 
-            'that', 'these', 'those', 'am', 'is', 'are', 'was', 'were', 
-            'be', 'been', 'being', 'have', 'has', 'had', 'having', 
-            'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 
-            'but', 'if', 'or', 'because', 'as', 'until', 'while', 
-            'of', 'at', 'by', 'for', 'with', 'about', 'against', 
-            'between', 'into', 'through', 'during', 'before', 'after', 
-            'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 
-            'on', 'off', 'over', 'under', 'again', 'further', 'then', 
-            'once', 'here', 'there', 'when', 'where', 'why', 'how', 
-            'all', 'any', 'both', 'each', 'few', 'more', 'most', 
-            'other', 'some', 'such', 'no', 'nor', 'not', 'only', 
-            'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 
-            'can', 'will', 'just', 'don', 'should', 'now'
-        ])
-        self.positive_words = set(['good', 'great', 'excellent', 'positive', 'fortunate', 'correct', 'superior'])
-        self.negative_words = set(['bad', 'poor', 'wrong', 'negative', 'unfortunate', 'incorrect', 'inferior'])
+        # Define stopwords (common words to ignore)
+        self.stopwords = {'a', 'an', 'the', 'and', 'or', 'but', 'if', 'then', 'else', 
+                          'when', 'up', 'so', 'too', 'very', 'just', 'with', 'for', 
+                          'at', 'of', 'on', 'in', 'to', 'from', 'by', 'about', 'as'}
+        
+        # Define positive words for sentiment analysis
+        self.positive_words = {'good', 'great', 'excellent', 'amazing', 'wonderful', 
+                               'fantastic', 'nice', 'love', 'like', 'best', 'happy', 
+                               'positive', 'awesome', 'brilliant', 'superb'}
+        
+        # Define negative words for sentiment analysis
+        self.negative_words = {'bad', 'terrible', 'awful', 'horrible', 'hate', 'dislike', 
+                               'poor', 'worst', 'negative', 'sad', 'angry', 'annoying', 
+                               'stupid', 'boring', 'dull'}
 
     def clean_text(self, text):
         # Remove special characters and numbers
-        text = re.sub(r'\W+', ' ', text)
-        text = re.sub(r'\d+', '', text)
+        text = re.sub(r'\W+', ' ', text)   # Replace non-word characters with space
+        text = re.sub(r'\d+', '', text)    # Remove digits
         return text.lower()
 
     def extract_data(self, text):
         # Extract sentences and words, removing stopwords
-        sentences = text.split('.')
+        sentences = [s.strip() for s in text.split('.') if s.strip()]  # Split and remove empty
         words = re.findall(r'\b\w+\b', text)
         words = [word for word in words if word not in self.stopwords]
         return sentences, words
@@ -41,10 +33,12 @@ class TextAnalyzer:
     def sentiment_analysis(self, text):
         # Perform sentiment analysis using a simple approach
         words = text.split()
+        if len(words) == 0:
+            return 0.0, 0.0
         positive_count = sum(1 for word in words if word in self.positive_words)
         negative_count = sum(1 for word in words if word in self.negative_words)
-        polarity = (positive_count - negative_count) / len(words) if len(words) > 0 else 0
-        subjectivity = (positive_count + negative_count) / len(words) if len(words) > 0 else 0
+        polarity = (positive_count - negative_count) / len(words)
+        subjectivity = (positive_count + negative_count) / len(words)
         return polarity, subjectivity
 
     def keyword_identification(self, text, num_keywords=10):
@@ -71,21 +65,21 @@ class TextAnalyzer:
         }
 
 def main():
-    print('-----TEXT ANALYZER-----')
+    print('----- TEXT ANALYZER -----')
     text_analyzer = TextAnalyzer()
     user_input = input("Enter the text to analyze: ")
     analysis_result = text_analyzer.analyze_text(user_input)
     
     print("\nExtracted Sentences:")
     for i, sentence in enumerate(analysis_result['sentences'], 1):
-        print(f"{i}. {sentence.strip()}")
-        
-    print("\nExtracted Words:")
+        print(f"{i}. {sentence}")
+    
+    print("\nExtracted Words (without stopwords):")
     print(analysis_result['words'])
     
     print("\nSentiment Analysis:")
-    print(f"Polarity: {analysis_result['polarity']}")
-    print(f"Subjectivity: {analysis_result['subjectivity']}")
+    print(f"Polarity: {analysis_result['polarity']:.3f}")
+    print(f"Subjectivity: {analysis_result['subjectivity']:.3f}")
     
     print("\nIdentified Keywords:")
     print(analysis_result['keywords'])
